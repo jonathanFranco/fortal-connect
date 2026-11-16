@@ -1,8 +1,14 @@
-const { Config } = require("tailwindcss");
 const generatePalette = require("./utils/generateColors");
 
-const primary = generatePalette("#EC3237");
-const secondary = generatePalette("#f5f5f5");
+const primary = {
+  ...generatePalette("#EC3237"),
+  DEFAULT: "hsl(var(--primary))",
+  foreground: "hsl(var(--primary-foreground))",
+};
+const secondary = {
+  DEFAULT: "hsl(var(--secondary))",
+  foreground: "hsl(var(--secondary-foreground))",
+};
 
 const config = {
   darkMode: ["class"],
@@ -22,6 +28,11 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
       colors: {
         primary: primary,
         secondary: secondary,

@@ -1,246 +1,103 @@
-"use client";
-
+import { nav } from "@/lib/content";
 import { Links } from "@/utils/constants";
-import { motion, useInView } from "framer-motion";
-import {
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
-} from "lucide-react";
-import Link from "next/link";
-import { useRef } from "react";
+import { ArrowUp, Facebook, Instagram, MapPin, MessageCircle } from "lucide-react";
 import Logo from "../ui/logo";
 
+const social = [
+  { label: "Instagram", href: Links.INSTAGRAM, Icon: Instagram },
+  { label: "Facebook", href: Links.FACEBOOK, Icon: Facebook },
+  { label: "WhatsApp", href: Links.WHATSAPP, Icon: MessageCircle },
+  { label: "Google Maps", href: Links.MAP, Icon: MapPin },
+];
+
 export function Footer() {
-  const footerRef = useRef<HTMLElement>(null);
-  const isInView = useInView(footerRef, { once: true });
-
-  const socialLinks = [
-    { name: "Facebook", href: Links.FACEBOOK, icon: "facebook" },
-    { name: "Instagram", href: Links.INSTAGRAM, icon: "instagram" },
-    { name: "Whatsapp", href: Links.WHATSAPP, icon: "whatsapp" },
-    { name: "Maps", href: Links.MAP, icon: "map" },
-  ];
-
-  const footerLinks = [
-    { name: "Serviços", href: "#services" },
-    { name: "Sobre", href: "#about" },
-    { name: "Benefícios", href: "#benefits" },
-    { name: "Contato", href: "#contact" },
-  ];
-
   return (
-    <footer
-      ref={footerRef}
-      className="relative w-full overflow-hidden border-t border-primary-500/10 bg-background"
-    >
-      <BackgroundDecorations />
-      <div className="container relative px-4 py-12 md:px-6 md:py-16">
-        <motion.div
-          variants={footerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 text-left divide-y divide-primary-500/10 md:flex-row md:divide-y-0"
-        >
-          <FooterBrand />
-          <FooterLinks links={footerLinks} />
-          <FooterSocialLinks socialLinks={socialLinks} />
-        </motion.div>
+    <footer className="relative border-t">
+      <div className="shell grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="space-y-5">
+          <Logo className="h-10 w-auto" />
+          <p className="max-w-xs text-sm text-muted-foreground">
+            Soluções completas em tecnologia e segurança para sua empresa ou
+            residência.
+          </p>
+          <div className="flex gap-2">
+            {social.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="grid h-11 w-11 place-items-center rounded-full border text-muted-foreground transition-colors hover:border-primary-500 hover:text-primary-500"
+              >
+                <Icon className="h-[18px] w-[18px]" />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <nav aria-label="Rodapé" className="space-y-4">
+          <p className="label-mono">Navegação</p>
+          <ul className="space-y-2.5">
+            {nav.map((item) => (
+              <li key={item.href}>
+                <a
+                  href={item.href}
+                  className="text-sm text-foreground/80 transition-colors hover:text-primary-500"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="space-y-4">
+          <p className="label-mono">Contato</p>
+          <ul className="space-y-2.5 text-sm text-foreground/80">
+            <li>
+              <a href={Links.CALL} className="hover:text-primary-500">
+                {Links.PHONE}
+              </a>
+            </li>
+            <li>
+              <a href={Links.EMAIL} className="break-all hover:text-primary-500">
+                {Links.EMAIL.replace("mailto:", "")}
+              </a>
+            </li>
+            <li>
+              <a
+                href={Links.MAP}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary-500"
+              >
+                {Links.ADDRESS}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <BottomDecoration />
+
+      <div className="border-t">
+        <div className="shell flex flex-col gap-4 pb-24 pt-6 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} Fortal Connect. Todos os direitos reservados.
+            </p>
+            <p className="label-mono !text-[0.6rem]">3.7319° S · 38.5267° W — Fortaleza, CE</p>
+          </div>
+          <a
+            href="#topo"
+            className="group inline-flex items-center gap-3 self-start text-sm font-medium text-foreground/80 transition-colors hover:text-primary-500 sm:self-auto sm:mr-36"
+          >
+            Voltar ao topo
+            <span className="grid h-10 w-10 place-items-center rounded-full border transition-colors group-hover:border-primary-500">
+              <ArrowUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+            </span>
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }
-
-function FooterBrand() {
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="flex w-full flex-col items-start space-y-4 py-6 md:w-auto md:py-0"
-    >
-      <div className="flex items-center gap-2 font-bold text-xl">
-        <Logo className="grayscale opacity-50 brightness-100" />
-      </div>
-      <p className="max-w-xs text-sm text-muted-foreground">
-        {`Soluções completas em tecnologia e segurança para sua empresa ou
-        residência.`}
-      </p>
-      <ContactInfo />
-    </motion.div>
-  );
-}
-
-function ContactInfo() {
-  const contacts = [
-    { Icon: Phone, text: Links.PHONE, href: Links.CALL, aria: "Telefone" },
-    {
-      Icon: Mail,
-      text: Links.EMAIL.replace("mailto:", ""),
-      href: Links.EMAIL,
-      aria: "E-mail",
-    },
-    { Icon: MapPin, text: Links.ADDRESS, href: Links.MAP, aria: "Endereço" },
-  ];
-
-  return (
-    <div className="mt-4 grid w-full grid-cols-1 gap-3 sm:gap-2">
-      {contacts.map(({ Icon, text, href, aria }, index) => (
-        <div
-          key={index}
-          className="flex w-full flex-col items-start gap-2 text-left md:flex-row md:items-start md:gap-3"
-        >
-          <Icon className="h-4 w-4 shrink-0 text-primary md:mt-0.5 text-muted-foreground" />
-          {href ? (
-            <a
-              href={href}
-              aria-label={aria}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="min-w-0 text-sm text-muted-foreground underline-offset-4 hover:underline break-words text-left"
-            >
-              {text}
-            </a>
-          ) : (
-            <span className="min-w-0 text-sm text-muted-foreground break-words text-left">
-              {text}
-            </span>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function FooterLinks({ links }: { links: { name: string; href: string }[] }) {
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="flex w-full flex-col items-start space-y-4 py-6 md:w-auto md:py-0"
-    >
-      <h3 className="text-base font-bold">Links Úteis</h3>
-      <ul className="flex flex-col items-start gap-2 md:items-start">
-        {links.map((link, index) => (
-          <li key={index}>
-            <Link
-              href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-primary"
-              onClick={(e) => handleSmoothScroll(e, link.href)}
-            >
-              {link.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </motion.div>
-  );
-}
-
-function FooterSocialLinks({
-  socialLinks,
-}: {
-  socialLinks: { name: string; href: string; icon: string }[];
-}) {
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="flex w-full flex-col items-start space-y-4 py-6 md:w-auto md:items-end md:py-0"
-    >
-      <h3 className="text-base font-bold">{""}</h3>
-      <div className="flex gap-4">
-        {socialLinks.map((social) => (
-          <SocialIcon key={social.name} href={social.href} icon={social.icon} />
-        ))}
-      </div>
-      <FooterCopyright />
-    </motion.div>
-  );
-}
-
-function FooterCopyright() {
-  return (
-    <div className="mt-4 flex h-12 items-center justify-start md:justify-center rounded-full border border-primary-500/10 bg-primary-500/5 px-4 backdrop-blur-sm">
-      <p className="text-xs text-muted-foreground">
-        &copy; {new Date().getFullYear()}{" "}
-        {"Fortal Connect. Todos os direitos reservados."}
-      </p>
-    </div>
-  );
-}
-
-type SocialIconProps = {
-  href: string;
-  icon: string;
-};
-
-function SocialIcon({ href, icon }: SocialIconProps) {
-  const icons = {
-    facebook: <Facebook className="h-5 w-5" />,
-    instagram: <Instagram className="h-5 w-5" />,
-    whatsapp: <MessageCircle className="h-5 w-5" />,
-    map: <MapPin className="h-5 w-5" />,
-  };
-
-  return (
-    <Link
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex h-10 w-10 items-center justify-center rounded-full border border-primary-500/10 bg-primary-500/5 text-muted-foreground transition-all duration-300 hover:border-primary-500/30 hover:bg-primary-500/10 hover:text-primary"
-    >
-      <div className="transition-transform duration-300 group-hover:scale-110">
-        {icons[icon as keyof typeof icons]}
-      </div>
-      <span className="sr-only">
-        {icon.charAt(0).toUpperCase() + icon.slice(1)}
-      </span>
-    </Link>
-  );
-}
-
-function BackgroundDecorations() {
-  return (
-    <>
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-[30%] -left-[10%] h-[300px] w-[300px] rounded-full bg-primary-500/5 blur-3xl" />
-        <div className="absolute top-[60%] -right-[10%] h-[250px] w-[250px] rounded-full bg-primary-700/5 blur-3xl" />
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-    </>
-  );
-}
-
-function BottomDecoration() {
-  return (
-    <div className="absolute bottom-0 right-0 h-24 w-24 translate-x-1/2 translate-y-1/2 rounded-full border border-primary-700/10 bg-primary-700/5 opacity-50" />
-  );
-}
-
-function handleSmoothScroll(event: React.MouseEvent, href: string) {
-  if (href.startsWith("#")) {
-    event.preventDefault();
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-  }
-}
-
-const footerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.3,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
