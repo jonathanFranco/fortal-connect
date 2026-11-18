@@ -1,11 +1,13 @@
-version: "3.8"
-
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+      # mantém node_modules e .next da imagem, sem misturar com os do host
+      - /app/node_modules
+      - /app/.next
     environment:
-      NODE_ENV: production
+      # detecta mudanças em bind mounts no macOS/Windows
+      WATCHPACK_POLLING: "true"

@@ -1,81 +1,38 @@
-# Docker Setup para SpeedNet Landing Page
+# Docker (desenvolvimento)
 
-Este documento explica como usar o Docker para construir e executar o projeto SpeedNet Landing Page.
+Alternativa ao `bun dev` local: roda o servidor de desenvolvimento do Next dentro de um contêiner, com hot reload. Útil para quem não quer instalar o Bun na máquina.
 
-## Requisitos
+> Produção não usa Docker — o deploy vai via FTP para o cPanel (veja o README).
 
-- Docker
-- Docker Compose
+## Rodando
 
-## Construindo e Executando com Docker
+```bash
+docker compose up --build   # http://localhost:3000
+docker compose down
+```
 
-### Usando Docker Compose (Recomendado)
+Edite os arquivos normalmente: a pasta do projeto é montada em `/app` e o Next recarrega sozinho.
 
-1. Construa e inicie os contêineres:
+## Como funciona
 
-\`\`\`bash
-docker-compose up -d
-\`\`\`
+- **Dockerfile** — imagem `oven/bun:1`, instala as dependências e roda `bun run dev`.
+- **docker-compose.yml**
+  - monta o projeto em `/app` (bind mount);
+  - `node_modules` e `.next` ficam em volumes do contêiner, então não conflitam com os do host nem criam arquivos de root na sua pasta;
+  - `WATCHPACK_POLLING=true` garante o hot reload no macOS/Windows.
 
-2. Acesse a aplicação em: http://localhost:3000
+## Mudou o package.json?
 
-3. Para parar os contêineres:
+O `node_modules` vive num volume, então reconstrua a imagem e recrie o volume:
 
-\`\`\`bash
-docker-compose down
-\`\`\`
+```bash
+docker compose up --build --renew-anon-volumes
+```
 
-### Usando Docker diretamente
+## Problemas comuns
 
-1. Construa a imagem:
-
-\`\`\`bash
-docker build -t speednet-landing .
-\`\`\`
-
-2. Execute o contêiner:
-
-\`\`\`bash
-docker run -p 3000:3000 speednet-landing
-\`\`\`
-
-## Estrutura do Docker
-
-- **Dockerfile**: Configuração multi-stage para otimizar o tamanho da imagem e segurança
-  - Stage 1: Instalação de dependências
-  - Stage 2: Build da aplicação Next.js
-  - Stage 3: Configuração do ambiente de produção
-
-- **docker-compose.yml**: Orquestração de serviços
-  - Serviço web: A aplicação Next.js
-  - Configuração de portas, reinicialização e verificação de saúde
-
-## Considerações para Produção
-
-Para um ambiente de produção, considere:
-
-1. Adicionar um proxy reverso como Nginx
-2. Configurar HTTPS
-3. Implementar um sistema de logs centralizado
-4. Configurar monitoramento
-
-## Solução de Problemas
-
-Se encontrar problemas ao executar os contêineres:
-
-1. Verifique os logs:
-
-\`\`\`bash
-docker-compose logs
-\`\`\`
-
-2. Verifique se as portas estão disponíveis:
-
-\`\`\`bash
-netstat -tuln | grep 3000
-\`\`\`
-
-3. Verifique o status dos contêineres:
-
-\`\`\`bash
-docker-compose ps
+```bash
+docker compose logs -f   # logs
+docker compose ps        # status
+ss -tuln | grep 3000     # porta 3000 ocupada?
+```
